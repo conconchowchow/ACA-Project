@@ -19,6 +19,11 @@ def mention_handler(body, context, payload, options, say, event):
 
 @app.event("message")
 def message_handler(body, context, payload, options, say, event):
+    calendarMaker(say)
+    # pass
+
+def calendarMaker(say):
+    say("Hello World!!")
     pass
 
 if __name__ == "__main__":
