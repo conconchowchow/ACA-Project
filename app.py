@@ -30,12 +30,14 @@ app = App(token=SLACK_BOT_TOKEN)
 
 @app.event("app_mention")
 def mention_handler(body, context, payload, options, say, event):
-    text = body['text']
-    say(text)
+    print(body)
+    # text = body["text"]
+    # say(text)
     calendarMaker(say)
+
 @app.event("message")
 def message_handler(message, body, context, payload, options, say, event):
-    text = message['text']
+    text = message["text"]
     say(text)
     calendarMaker(say)
     # pass
