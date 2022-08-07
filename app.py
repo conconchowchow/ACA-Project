@@ -55,12 +55,20 @@ def message_handler(say, message, client):
 # calendar making function
 def calendar_maker(say, text, client, channel):
     # checking text format
-    if text.count("\"") == 6: # if text has 6 ("" - double quotes)
+    if text.count("\"") == 8: # if text has 6 ("" - double quotes)
         text = text[text.find("\""):]
+    elif text.find("help") != -1: # if text has help
+        say("~=~ Help ~=~")
+        say("~=~ Format: ~=~")
+        say("~=~ \"<title>\" \"<description>\" \"<start time>\" \"<end time>\" ~=~")
+        say("~=~ Example: ~=~")
+        say("~=~ \"My cool event\" \"This is a cool event\" \"2022-08-06 22:00:00\" \"2022-08-07 10:00:00\" ~=~")
+        say("~=~ Help ~=~")
+        return
     else: # if text doesn't have the correct format
         say("~=~ Sorry, I don't understand the inputted format ~=~")
         return
-    
+
     #splitting text into sub-parts, removing unessary dividers
     subtexts = text.split("\"")
     subtexts.pop(0)
