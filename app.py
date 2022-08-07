@@ -12,6 +12,9 @@ from ics import Calendar, Event
 # arrow import (for time)
 import arrow
 
+#### TODO ARROW TIME CONVERSION ####
+
+
 # slack app setup + config
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
@@ -24,36 +27,65 @@ app = App(token=SLACK_BOT_TOKEN)
 # event - app mention from channel
 @app.event("app_mention")
 def mention_handler(say, event, client):
+    # Intro message
+    say("~=~ CalendarBot! ~=~")
+
     # extracting text + channel
     text = event["text"]
     channel = event["channel"]
 
     # calendar maker
-    calendarMaker(say, text, client, channel)
+    calendar_maker(say, text, client, channel)
 
 # event - app direct message
 @app.event("message")
 def message_handler(say, message, client):
+    # Intro message
+    say("~=~ CalendarBot! ~=~")
 
+    # extracting text + channel
     text = message["text"]
     channel = message["channel"]
 
     # calendar maker
-    calendarMaker(say, text, client, channel)
+    calendar_maker(say, text, client, channel)
 
 #############################################################################################
 
 # calendar making function
-def calendarMaker(say, text, client, channel):
+def calendar_maker(say, text, client, channel):
+    # checking text format
+    if text.count("\"") == 6: # if text has 6 ("" - double quotes)
+        text = text[text.find("\""):]
+    else: # if text doesn't have the correct format
+        say("~=~ Sorry, I don't understand the inputted format ~=~")
+        return
+    
+    #splitting text into sub-parts, removing unessary dividers
+    subtexts = text.split("\"")
+    subtexts.pop(0)
+    subtexts.pop(1)
+    subtexts.pop(-1)
+    subtexts.pop(-2)
+
+    ###test - printing subtexts###
+    print(subtexts)
+
     # initiation message
-    say("~=~ Calendar Bot! ~=~")
+    say("~=~ Making Event! ~=~")
+    
+
+
+    ### TODO CREATE FILE ###
+
+    ### ARROW CONVERSION ###
 
     # file upload
     filename = "./event.ics"
     client.files_upload(
         channels = channel,
         file = filename,
-        initial_comment = "Here is your calendar file:",
+        initial_comment = "~=~ Here is your calendar file: ~=~",
     )
 
 #############################################################################################
