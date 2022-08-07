@@ -2,6 +2,7 @@
 from cgitb import text
 import logging
 import os
+from time import time
 
 from dotenv import load_dotenv
 from slack_bolt import App
@@ -9,11 +10,9 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 # calendar import
 from ics import Calendar, Event
-# arrow import (for time)
+# arrow and timezone import (for time)
 import arrow
-
-#### TODO ARROW TIME CONVERSION ####
-
+from dateutil import tz
 
 # slack app setup + config
 logging.basicConfig(level=logging.INFO)
@@ -63,6 +62,8 @@ def calendar_maker(say, text, client, channel):
         say("~=~ \"<title>\" \"<description>\" \"<start time>\" \"<end time>\" ~=~")
         say("~=~ Example: ~=~")
         say("~=~ \"My cool event\" \"This is a cool event\" \"2022-08-06 22:00:00\" \"2022-08-07 10:00:00\" ~=~")
+        say("~=~ Note: ~=~")
+        say("~=~ Currently only works with PST time! ~=~")
         say("~=~ Help ~=~")
         return
     else: # if text doesn't have the correct format
@@ -84,6 +85,14 @@ def calendar_maker(say, text, client, channel):
     say("~=~ Making Event! ~=~") # TODO - get rid of this message
     c = Calendar()
     e = Event()
+
+    ### TODO - ARROW CONVERSION ###
+    arrow.get(subtexts[2], 'YYYY-MM-DD HH:mm:ss')
+    e.begin = 
+    arrow.get(subtexts[3], 'YYYY-MM-DD HH:mm:ss')
+    subtexts[3] = arrow.utcnow() # .format('YYYY-MM-DD HH:mm:ss')
+
+    # adding event details
     e.name = subtexts[0]
     e.description = subtexts[1]
     e.begin = subtexts[2]
@@ -92,9 +101,7 @@ def calendar_maker(say, text, client, channel):
     print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
     # creating ics file
     with open('event.ics', 'w') as f:
-        f.writelines(c.serialize_iter())
-
-    ### TODO - ARROW CONVERSION ###
+        f.writelines(c.serialize_iter())    
 
     # file upload
     filename = "./event.ics"
