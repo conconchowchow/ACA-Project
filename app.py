@@ -30,8 +30,9 @@ def message_handler(message, body, context, payload, options, say, event):
     calendarMaker(say, text)
 
 def calendarMaker(say, text):
+    say("~=~ Calendar Bot! ~=~")
+    # text.
     say(text)
-    say("Hello World!!")
 
 
 # Main
