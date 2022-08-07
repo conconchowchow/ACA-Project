@@ -73,20 +73,28 @@ def calendar_maker(say, text, client, channel):
     subtexts = text.split("\"")
     subtexts.pop(0)
     subtexts.pop(1)
+    subtexts.pop(2)
     subtexts.pop(-1)
     subtexts.pop(-2)
 
     ###test - printing subtexts###
     print(subtexts)
 
-    # initiation message
-    say("~=~ Making Event! ~=~")
-    
+    # creating calendar/event
+    say("~=~ Making Event! ~=~") # TODO - get rid of this message
+    c = Calendar()
+    e = Event()
+    e.name = subtexts[0]
+    e.description = subtexts[1]
+    e.begin = subtexts[2]
+    e.end = subtexts[3]
+    c.events.add(e)
+    print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
+    # creating ics file
+    with open('event.ics', 'w') as f:
+        f.writelines(c.serialize_iter())
 
-
-    ### TODO CREATE FILE ###
-
-    ### ARROW CONVERSION ###
+    ### TODO - ARROW CONVERSION ###
 
     # file upload
     filename = "./event.ics"
