@@ -1,5 +1,6 @@
 # basic imports
 from cgitb import text
+from datetime import tzinfo
 import logging
 import os
 from time import time
@@ -79,7 +80,7 @@ def calendar_maker(say, text, client, channel):
     subtexts.pop(-2)
 
     ###test - printing subtexts###
-    print(subtexts)
+    print("<testing> subtexts: " + subtexts)
 
     # creating calendar/event
     say("~=~ Making Event! ~=~") # TODO - get rid of this message
@@ -87,10 +88,14 @@ def calendar_maker(say, text, client, channel):
     e = Event()
 
     ### TODO - ARROW CONVERSION ###
-    arrow.get(subtexts[2], 'YYYY-MM-DD HH:mm:ss')
-    e.begin = 
-    arrow.get(subtexts[3], 'YYYY-MM-DD HH:mm:ss')
-    subtexts[3] = arrow.utcnow() # .format('YYYY-MM-DD HH:mm:ss')
+    start_arrow = arrow.get(subtexts[2], 'YYYY-MM-DD HH:mm:ss')
+    start_arrow.replace(tzinfo="America/Los_Angeles")
+    end_arrow = arrow.get(subtexts[3], 'YYYY-MM-DD HH:mm:ss')
+    end_arrow.replace(tzinfo="America/Los_Angeles")
+    print("<testing> start time: " + start_arrow)
+    print("<testing> end time: " + end_arrow)
+    # e.begin = start_arrow
+    # e.end = end_arrow
 
     # adding event details
     e.name = subtexts[0]
