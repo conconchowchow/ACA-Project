@@ -80,29 +80,49 @@ def calendar_maker(say, text, client, channel):
     subtexts.pop(-2)
 
     ###test - printing subtexts###
-    print("<testing> subtexts: " + subtexts)
+    print("<testing> subtexts: ")
+    print(subtexts)
 
     # creating calendar/event
-    say("~=~ Making Event! ~=~") # TODO - get rid of this message
+    say("~=~ Making Event! ~=~")
     c = Calendar()
     e = Event()
 
     ### TODO - ARROW CONVERSION ###
     start_arrow = arrow.get(subtexts[2], 'YYYY-MM-DD HH:mm:ss')
-    start_arrow.replace(tzinfo="America/Los_Angeles")
     end_arrow = arrow.get(subtexts[3], 'YYYY-MM-DD HH:mm:ss')
-    end_arrow.replace(tzinfo="America/Los_Angeles")
-    print("<testing> start time: " + start_arrow)
-    print("<testing> end time: " + end_arrow)
-    # e.begin = start_arrow
-    # e.end = end_arrow
+    
+    ###test - printing arrow times###
+    print("<testing> start time: ")
+    print(start_arrow)
+    print("<testing> end time: ")
+    print(end_arrow)
+    print(tz.gettz('US/Pacific'))
+    print(tz.gettz('America/Los_Angeles'))
+
+    start_arrow = start_arrow.replace(tzinfo='US/Pacific')
+    end_arrow = end_arrow.replace(tzinfo='US/Pacific')
+
+    # start_arrow.replace(tzinfo=tz.gettz('America/Los_Angeles'))
+    # end_arrow.replace(tzinfo=tz.gettz('America/Los_Angeles'))
+
+    ###test - printing arrow times###
+    print("<testing> start time after convert: ")
+    print(start_arrow)
+    print("<testing> end time after convert: ")
+    print(end_arrow)
+    
 
     # adding event details
     e.name = subtexts[0]
     e.description = subtexts[1]
-    e.begin = subtexts[2]
-    e.end = subtexts[3]
+
+    e.begin = start_arrow
+    e.end = end_arrow
+    # e.begin = subtexts[2] # taking raw data from subtexts
+    # e.end = subtexts[3] # taking raw data from subtexts
     c.events.add(e)
+
     print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
     # creating ics file
     with open('event.ics', 'w') as f:
