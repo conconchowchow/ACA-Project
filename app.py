@@ -20,20 +20,27 @@ SLACK_BOT_TOKEN = os.environ["SLACK_BOT_TOKEN"]
 app = App(token=SLACK_BOT_TOKEN)
 
 @app.event("app_mention")
-def mention_handler(body, context, payload, options, say, event):
+def mention_handler(say, event, client):
     text = event["text"]
-    calendarMaker(say, text)
+    channel = event["channel"]
+    calendarMaker(say, text, client, channel)
 
 @app.event("message")
-def message_handler(message, body, context, payload, options, say, event):
+def message_handler(say, message, client):
     text = message["text"]
-    calendarMaker(say, text)
+    channel = message["channel"]
+    calendarMaker(say, text, client, channel)
 
-def calendarMaker(say, text):
+def calendarMaker(say, text, client, channel):
     say("~=~ Calendar Bot! ~=~")
-    # text.
-    say(text)
 
+    filename = "./event.ics"
+
+    client.files_upload(
+        channels = channel,
+        file = filename,
+        initial_comment = "Here is your calendar file:",
+    )
 
 # Main
 if __name__ == "__main__":
