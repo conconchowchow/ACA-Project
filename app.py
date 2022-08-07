@@ -9,6 +9,8 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 
 # calendar import
 from ics import Calendar, Event
+# arrow import (for time)
+import arrow
 
 # slack app setup + config
 logging.basicConfig(level=logging.INFO)
