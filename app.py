@@ -110,10 +110,10 @@ def calendar_maker(say, text, client, channel, user_id):
     start_arrow = start_arrow.replace(tzinfo = timezone)
     end_arrow = end_arrow.replace(tzinfo = timezone)
     ###test - printing arrow times###
-    print("<testing> start time after convert: ")
-    print(start_arrow)
-    print("<testing> end time after convert: ")
-    print(end_arrow)
+    # print("<testing> start time after convert: ")
+    # print(start_arrow)
+    # print("<testing> end time after convert: ")
+    # print(end_arrow)
 
     # creating calendar/event
     say("~=~ Making Event! ~=~")
@@ -131,17 +131,27 @@ def calendar_maker(say, text, client, channel, user_id):
     # print("<testing> event: ")
     # print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
 
-    # creating ics file
-    with open('event.ics', 'w') as f:
-        f.writelines(c.serialize_iter())    
+    ### TODO - try catch for calendar/event ###
 
+    # creating ics file
+    eventname = "EVENT: " + subtexts[0] + ".ics" # naming file based on event name
+    with open(eventname, 'w') as f:
+    # with open('event.ics', 'w') as f: # original using just the name 'event.ics'
+        f.writelines(c.serialize_iter())    
+    
     # file upload
-    filename = "./event.ics"
+    filename = "./" + eventname
+    # filename = "./event.ics" # original using just the name 'event.ics'
     client.files_upload(
         channels = channel,
         file = filename,
         initial_comment = "~=~ Here is your calendar file: ~=~",
     )
+
+    # deleting ics file
+    # os.remove('event.ics') # original using just the name 'event.ics'
+    os.remove(filename)
+
 
 #############################################################################################
 
