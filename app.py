@@ -1,3 +1,13 @@
+#############################################################################################
+
+# Name: CalendarBot
+# Description: Bot that can create calendar files on Slack workspace
+# Author: Connor Chow
+# Date: 2022-08-07
+# Notes: For ACA 2022
+
+#############################################################################################
+
 # basic imports
 from cgitb import text
 from datetime import tzinfo
