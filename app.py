@@ -33,9 +33,10 @@ def mention_handler(say, event, client):
     # extracting text + channel
     text = event["text"]
     channel = event["channel"]
+    user_id = event["user"]
 
     # calendar maker
-    calendar_maker(say, text, client, channel)
+    calendar_maker(say, text, client, channel, user_id)
 
 # event - app direct message
 @app.event("message")
@@ -46,14 +47,15 @@ def message_handler(say, message, client):
     # extracting text + channel
     text = message["text"]
     channel = message["channel"]
+    user_id = message["user"]
 
     # calendar maker
-    calendar_maker(say, text, client, channel)
+    calendar_maker(say, text, client, channel, user_id)
 
 #############################################################################################
 
 # calendar making function
-def calendar_maker(say, text, client, channel):
+def calendar_maker(say, text, client, channel, user_id):
     # checking text format
     if text.count("\"") == 8: # if text has 6 ("" - double quotes)
         text = text[text.find("\""):]
@@ -71,58 +73,48 @@ def calendar_maker(say, text, client, channel):
         say("~=~ Sorry, I don't understand the inputted format ~=~")
         return
 
-    #splitting text into sub-parts, removing unessary dividers
+    # splitting text into sub-parts, removing unessary dividers
     subtexts = text.split("\"")
     subtexts.pop(0)
     subtexts.pop(1)
     subtexts.pop(2)
     subtexts.pop(-1)
     subtexts.pop(-2)
-
-    ###test - printing subtexts###
+    ###test - printing subtexts
     print("<testing> subtexts: ")
     print(subtexts)
 
-    # creating calendar/event
-    say("~=~ Making Event! ~=~")
-    c = Calendar()
-    e = Event()
+    # extracting user's timezones
+    user_data = client.users_info(user = user_id)
+    timezone = user_data["user"]["tz"]
+    ###test - printing user's timezones###
+    print("<testing> timezone: ")
+    print(timezone)
 
-    ### TODO - ARROW CONVERSION ###
+
+    #taking times in subtext and converting to arrow (to make the correct timezones in .ics file)
     start_arrow = arrow.get(subtexts[2], 'YYYY-MM-DD HH:mm:ss')
     end_arrow = arrow.get(subtexts[3], 'YYYY-MM-DD HH:mm:ss')
-    
-    ###test - printing arrow times###
-    print("<testing> start time: ")
-    print(start_arrow)
-    print("<testing> end time: ")
-    print(end_arrow)
-    print(tz.gettz('US/Pacific'))
-    print(tz.gettz('America/Los_Angeles'))
-
-    start_arrow = start_arrow.replace(tzinfo='US/Pacific')
-    end_arrow = end_arrow.replace(tzinfo='US/Pacific')
-
-    # start_arrow.replace(tzinfo=tz.gettz('America/Los_Angeles'))
-    # end_arrow.replace(tzinfo=tz.gettz('America/Los_Angeles'))
-
+    start_arrow = start_arrow.replace(tzinfo = timezone)
+    end_arrow = end_arrow.replace(tzinfo = timezone)
     ###test - printing arrow times###
     print("<testing> start time after convert: ")
     print(start_arrow)
     print("<testing> end time after convert: ")
     print(end_arrow)
-    
 
+    # creating calendar/event
+    say("~=~ Making Event! ~=~")
+    c = Calendar()
+    e = Event()
     # adding event details
     e.name = subtexts[0]
     e.description = subtexts[1]
-
     e.begin = start_arrow
     e.end = end_arrow
     # e.begin = subtexts[2] # taking raw data from subtexts
     # e.end = subtexts[3] # taking raw data from subtexts
     c.events.add(e)
-
     print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
     # creating ics file
     with open('event.ics', 'w') as f:
