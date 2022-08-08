@@ -66,7 +66,7 @@ def calendar_maker(say, text, client, channel, user_id):
         say("~=~ Example: ~=~")
         say("~=~ \"My cool event\" \"This is a cool event\" \"2022-08-06 22:00:00\" \"2022-08-07 10:00:00\" ~=~")
         say("~=~ Note: ~=~")
-        say("~=~ Currently only works with PST time! ~=~")
+        say("~=~ Timezone is based on the user sending the message! ~=~")
         say("~=~ Help ~=~")
         return
     else: # if text doesn't have the correct format
@@ -81,15 +81,15 @@ def calendar_maker(say, text, client, channel, user_id):
     subtexts.pop(-1)
     subtexts.pop(-2)
     ###test - printing subtexts
-    print("<testing> subtexts: ")
-    print(subtexts)
+    # print("<testing> subtexts: ")
+    # print(subtexts)
 
     # extracting user's timezones
     user_data = client.users_info(user = user_id)
     timezone = user_data["user"]["tz"]
     ###test - printing user's timezones###
-    print("<testing> timezone: ")
-    print(timezone)
+    # print("<testing> timezone: ")
+    # print(timezone)
 
 
     #taking times in subtext and converting to arrow (to make the correct timezones in .ics file)
@@ -115,7 +115,10 @@ def calendar_maker(say, text, client, channel, user_id):
     # e.begin = subtexts[2] # taking raw data from subtexts
     # e.end = subtexts[3] # taking raw data from subtexts
     c.events.add(e)
-    print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
+    ###test - printing calendar/event###
+    # print("<testing> event: ")
+    # print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
+
     # creating ics file
     with open('event.ics', 'w') as f:
         f.writelines(c.serialize_iter())    
