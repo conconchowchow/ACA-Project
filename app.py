@@ -66,7 +66,9 @@ def calendar_maker(say, text, client, channel, user_id):
         say("~=~ Example: ~=~")
         say("~=~ \"My cool event\" \"This is a cool event\" \"2022-08-06 22:00:00\" \"2022-08-07 10:00:00\" ~=~")
         say("~=~ Note: ~=~")
-        say("~=~ Timezone is based on the user sending the message! ~=~")
+        say("~=~ 1. Dates must be in the format YYYY-MM-DD HH:MM:SS ~=~")
+        say("~=~ 2. Times must be inputted based on a 24-hour time/clock ~=~")
+        say("~=~ 3. Timezone is based on the user sending the message! ~=~")
         say("~=~ Help ~=~")
         return
     else: # if text doesn't have the correct format
