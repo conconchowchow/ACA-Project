@@ -14,6 +14,7 @@ import os
 from dotenv import load_dotenv
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
+from slack_sdk.errors import SlackApiError
 
 # calendar import
 from ics import Calendar, Event
@@ -27,6 +28,7 @@ load_dotenv()
 SLACK_APP_TOKEN = os.environ["SLACK_APP_TOKEN"]
 SLACK_BOT_TOKEN = os.environ["SLACK_BOT_TOKEN"]
 app = App(token=SLACK_BOT_TOKEN)
+logger = logging.getLogger(__name__)
 
 #############################################################################################
 
@@ -119,7 +121,11 @@ def calendar_maker(say, text, client, channel, user_id):
     e.name = subtexts[0]
     e.description = subtexts[1]
     e.begin = start_arrow
-    e.end = end_arrow
+    try:
+        e.end = end_arrow
+    except:
+        say("~=~ Sorry, the times given wouldn't create an event ~=~")
+        return
     # e.begin = subtexts[2] # taking raw data from subtexts
     # e.end = subtexts[3] # taking raw data from subtexts
     c.events.add(e)
@@ -127,26 +133,34 @@ def calendar_maker(say, text, client, channel, user_id):
     # print("<testing> event: ")
     # print(c.events) # print event # {<Event 'My cool event' begin:2014-01-01 00:00:00 end:2014-01-01 00:00:01>}
 
-    ### TODO - try catch for calendar/event ###
-
     # creating ics file
     eventname = "EVENT: " + subtexts[0] + ".ics" # naming file based on event name
-    with open(eventname, 'w') as f:
-    # with open('event.ics', 'w') as f: # original using just the name 'event.ics'
-        f.writelines(c.serialize_iter())    
+    try:
+        with open(eventname, 'w') as f:
+        # with open('event.ics', 'w') as f: # original using just the name 'event.ics'
+            f.writelines(c.serialize_iter())   
+    except Exception as e: 
+        say("~=~ Sorry, I couldn't create the file ~=~")
+
     
     # file upload
     filename = "./" + eventname
     # filename = "./event.ics" # original using just the name 'event.ics'
-    client.files_upload(
-        channels = channel,
-        file = filename,
-        initial_comment = "~=~ Here is your calendar file: ~=~",
-    )
+    try:
+        client.files_upload(
+            channels = channel,
+            file = filename,
+            initial_comment = "~=~ Here is your calendar file: ~=~",
+        )
+    except SlackApiError as e:
+        say("~=~ Sorry, I couldn't upload the file ~=~")
 
     # deleting ics file
     # os.remove('event.ics') # original using just the name 'event.ics'
-    os.remove(filename)
+    try:
+        os.remove(filename)
+    except OSError as e:
+        logger.error("Error uploading file: {}".format(e))
 
 
 #############################################################################################
